@@ -3,7 +3,6 @@ import 'package:aaacyborg/screens/store_sceen.dart';
 import 'package:aaacyborg/screens/youtube_video_screen.dart';
 import 'package:aaacyborg/widgets/widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 class WatchVideoScreen extends StatefulWidget {
   const WatchVideoScreen({Key? key}) : super(key: key);
@@ -15,10 +14,10 @@ class WatchVideoScreen extends StatefulWidget {
 class _WatchVideoScreenState extends State<WatchVideoScreen> {
   int _selectedIndex = 1;
 
-  static  List<Widget> _widgetOptions = <Widget>[
-    MyCampaignScreen(),
-    YouTubePlayerScreen(),
-    StoreScreen(),
+  static  final List<Widget> _widgetOptions = <Widget>[
+    const MyCampaignScreen(),
+    const WebviewtubeDemo(),
+    const StoreScreen(),
   ];
 
   void _onItemTapped(int index) {

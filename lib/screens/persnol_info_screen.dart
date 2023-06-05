@@ -34,19 +34,6 @@ class _PersnolInfoScreenState extends State<PersnolInfoScreen> {
   }
 
   Future<void> _uploadImage() async {
-    /*if (_image == null || _accessToken == null) {
-      // Image file or access token is missing
-      return;
-    }
-
-    // Create a multipart request
-    var request = http.MultipartRequest(
-      'POST',
-      Uri.parse('https://cnt.hiredeveloper.today/api/updateTalentProfileImage'),
-    );
-
-    // Set the authorization header
-    request.headers['Authorization'] = 'Bearer $_accessToken';*/
 
     // Add the image file to the request
     var imageStream = http.ByteStream(_image!.openRead());
@@ -58,19 +45,6 @@ class _PersnolInfoScreenState extends State<PersnolInfoScreen> {
       length!,
       filename: _image!.path,
     );
-
-    /*request.files.add(multipartFile);
-
-    // Send the request and get the response
-    var response = await request.send();*/
-
-    /*if (response.statusCode == 200) {
-      // Image uploaded successfully
-      print('Image uploaded');
-    } else {
-      // Handle error
-      print('Image upload failed');
-    }*/
   }
 
   Future<void> uploadImage(String token) async {
@@ -106,34 +80,32 @@ class _PersnolInfoScreenState extends State<PersnolInfoScreen> {
     }
   }
 
+  @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        children: [
-          SizedBox(height: 100),
-          // Button to open the gallery
-          ElevatedButton(
-            onPressed: () => _selectImage(ImageSource.gallery),
-            child: Text('Select from Gallery'),
-          ),
-          // Button to open the camera
-          ElevatedButton(
-            onPressed: () => _selectImage(ImageSource.camera),
-            child: Text('Take a Photo'),
-          ),
-          // Display the selected image
-          if (_image != null)
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: CircleAvatar(
-                radius: 80, // adjust the radius as needed
-                backgroundImage: FileImage(_image!),
-              ),
+    return Column(
+      children: [
+        const SizedBox(height: 100),
+        // Button to open the gallery
+        ElevatedButton(
+          onPressed: () => _selectImage(ImageSource.gallery),
+          child: const Text('Select from Gallery'),
+        ),
+        // Button to open the camera
+        ElevatedButton(
+          onPressed: () => _selectImage(ImageSource.camera),
+          child: const Text('Take a Photo'),
+        ),
+        // Display the selected image
+        if (_image != null)
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: CircleAvatar(
+              radius: 80, // adjust the radius as needed
+              backgroundImage: FileImage(_image!),
             ),
-
-          Text(Token),
-        ],
-      ),
+          ),
+        Text(Token),
+      ],
     );
   }
   @override

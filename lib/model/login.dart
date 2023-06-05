@@ -9,45 +9,21 @@ Login loginFromJson(String str) => Login.fromJson(json.decode(str));
 String loginToJson(Login data) => json.encode(data.toJson());
 
 class Login {
-  List<Datum> data;
-  String message;
-  String status;
+  String username;
+  String password;
 
   Login({
-    required this.data,
-    required this.message,
-    required this.status,
+    required this.username,
+    required this.password,
   });
 
   factory Login.fromJson(Map<String, dynamic> json) => Login(
-    data: List<Datum>.from(json["data"].map((x) => Datum.fromJson(x))),
-    message: json["message"],
-    status: json["status"],
+    username: json["username"],
+    password: json["password"],
   );
 
   Map<String, dynamic> toJson() => {
-    "data": List<dynamic>.from(data.map((x) => x.toJson())),
-    "message": message,
-    "status": status,
-  };
-}
-
-class Datum {
-  String token;
-  String userType;
-
-  Datum({
-    required this.token,
-    required this.userType,
-  });
-
-  factory Datum.fromJson(Map<String, dynamic> json) => Datum(
-    token: json["Token"],
-    userType: json["userType"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "Token": token,
-    "userType": userType,
+    "username": username,
+    "password": password,
   };
 }

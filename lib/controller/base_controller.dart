@@ -1,9 +1,7 @@
-import 'package:aaacyborg/services/app_exception.dart';
+import 'package:get/get.dart';
 
-class BaseController {
-  void handleError(error){
-    if(error is BadRequestException){
-
-    }
-  }
+class BaseController extends GetxController{
+  /*TextEditingController userNameController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  String forTokenController = "1234567890";*/
 }

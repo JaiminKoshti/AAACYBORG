@@ -1,13 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-Text text()  {
-  return Text("data");
-}
-
-class textout {
-  Text textin = Text("data");
-}
 
 
 class CustomImages {
@@ -20,6 +12,7 @@ class CustomImages {
   static const String my_campaign = 'assets/my_campaign.png';
   static const String delete_account = 'assets/delete_account.png';
   static const String personal_info = 'assets/personal_info.png';
+  static const String google = 'assets/google.png';
 }
 
 class CustomIcons{
@@ -28,6 +21,11 @@ class CustomIcons{
 }
 
 class CustomText{
-  static String context_us = "Contact us";
+  static const String context_us = "Contact us";
+  static const String my_campaign = "My campaign";
+  static const String privacy_policy = "Privacy Policy";
+  static const String watch_video = "Watch Video";
+  static const String buy_point = "Buy Point";
+  static const String logout = "Logout";
 
 }

@@ -47,8 +47,7 @@ class _StoreScreenState extends State<StoreScreen> {
                                 width: 30)),
                         Padding(
                           padding: EdgeInsets.only(top: 3.0, bottom: 10),
-                          child: Text(
-                            "Buy point",
+                          child: Text(CustomText.buy_point,
                             textAlign: TextAlign.center,
                             style: TextStyle(fontSize: 15),
                           ),
@@ -171,8 +170,7 @@ class _StoreScreenState extends State<StoreScreen> {
                                 width: 30)),
                         Padding(
                           padding: EdgeInsets.only(top: 3.0, bottom: 10),
-                          child: Text(
-                            "Privacy policy",
+                          child: Text(CustomText.privacy_policy,
                             textAlign: TextAlign.center,
                             style: TextStyle(fontSize: 15),
                           ),
@@ -210,7 +208,7 @@ class _StoreScreenState extends State<StoreScreen> {
                               image: AssetImage(CustomImages.contact_us),
                               width: 30),
                         ),
-                        Text("Contact us")
+                        Text(CustomText.context_us)
                       ],
                     ),
                   ),

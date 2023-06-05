@@ -1,4 +1,5 @@
-import 'package:aaacyborg/auth/login_api.dart';
+import 'package:aaacyborg/controller/logout_controller.dart';
+import 'package:aaacyborg/screens/auth/login/provider.dart';
 import 'package:aaacyborg/screens/buy_point_screen.dart';
 import 'package:aaacyborg/screens/my_campaign_screen.dart';
 import 'package:aaacyborg/screens/privacy_policy_screen.dart';
@@ -6,7 +7,11 @@ import 'package:aaacyborg/screens/watch_video_screen.dart';
 import 'package:aaacyborg/screens/youtube_video_screen.dart';
 import 'package:aaacyborg/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_instance/get_instance.dart';
+import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -16,10 +21,50 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final LogoutController loginController = Get.put(LogoutController());
+  String Token = '';
+
+  ///logout
+  /*void _logout(BuildContext context) {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    userProvider.logout();
+
+    // Handle the necessary logout logic for the API or Google login scenario
+    // For example, if using Google sign-in, you would call googleSignIn.signOut()
+
+    Navigator.pushAndRemoveUntil(context, PageRouteBuilder(pageBuilder:
+        (BuildContext context, Animation animation,
+            Animation secondaryAnimation) {
+      return const LoginScreen();
+    }), (Route route) => false);
+  }*/
+
+  @override
+  void initState() {
+    super.initState();
+    _getAccessToken();
+  }
+
+  ///Token From Api
+  Future<void> _getAccessToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+
+    setState(() {
+      Token = token ?? '';
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final googleAccountProvider = Provider.of<GoogleAccountProvider>(context);
+    final user = googleAccountProvider.user;
 
-    //final user = FirebaseAuth.instance.currentUser;
+    ///provider for email
+    //final userProvider = Provider.of<UserProvider>(context);
+    //final String? emailAPI = userProvider.user;
+
+    final email = user != null ? user.email : "emailAPI";
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -40,8 +85,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         side: const BorderSide(color: Colors.black12),
                         borderRadius: BorderRadius.circular(5)),
                     child: Column(
-                      children: const [
-                        Padding(
+                      children: [
+                        const Padding(
                           padding: EdgeInsets.only(top: 10.0),
                           child: Text(
                             "Account:",
@@ -50,11 +95,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsets.only(top: 3.0, bottom: 10),
+                          padding: const EdgeInsets.only(top: 3.0, bottom: 10),
                           child: Text(
-                            "abc@gmail.com",
+                            email,
                             textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 15),
+                            style: const TextStyle(fontSize: 15),
                           ),
                         ),
                       ],
@@ -97,7 +142,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
 
-              ///expitation Date
+              ///expiration Date
               Padding(
                 padding: const EdgeInsets.all(2.0),
                 child: SizedBox(
@@ -111,8 +156,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         const Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 15, vertical: 5),
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 15, vertical: 5),
                           child: Image(
                               image: AssetImage(CustomImages.vip_card),
                               width: 35),
@@ -124,14 +169,12 @@ class _HomeScreenState extends State<HomeScreen> {
                             Text(
                               "VIP expiration",
                               textAlign: TextAlign.center,
-                              style:
-                                  TextStyle(fontSize: 15),
+                              style: TextStyle(fontSize: 15),
                             ),
                             Text(
                               "Date:",
                               textAlign: TextAlign.center,
-                              style:
-                                  TextStyle(fontSize: 15),
+                              style: TextStyle(fontSize: 15),
                             ),
                           ],
                         ),
@@ -170,19 +213,20 @@ class _HomeScreenState extends State<HomeScreen> {
                               children: const [
                                 Padding(
                                   padding: EdgeInsets.symmetric(
-                                      horizontal: 15, vertical: 5),
+                                      horizontal: 10, vertical: 5),
                                   child: Image(
-                                      image: AssetImage(CustomImages.contact_us),
-                                      width: 30,fit: BoxFit.cover,
+                                    image: AssetImage(CustomImages.contact_us),
+                                    width: 30,
+                                    fit: BoxFit.cover,
                                   ),
                                 ),
-                                Text("contact_us")
+                                Text(CustomText.context_us)
                               ],
                             ),
                           ),
                         ),
                         onTap: () async {
-                          await Share.share("Mb Infoways");
+                          await Share.share("hey !");
                         },
                       ),
                     ),
@@ -204,16 +248,21 @@ class _HomeScreenState extends State<HomeScreen> {
                                   padding: EdgeInsets.symmetric(
                                       horizontal: 15, vertical: 5),
                                   child: Image(
-                                      image: AssetImage(CustomImages.my_campaign),
+                                      image:
+                                          AssetImage(CustomImages.my_campaign),
                                       width: 28),
                                 ),
-                                Text("My Campaign")
+                                Text(CustomText.my_campaign)
                               ],
                             ),
                           ),
                         ),
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => const MyCampaignScreen()));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const MyCampaignScreen()));
                         },
                       ),
                     ),
@@ -226,7 +275,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: const EdgeInsets.only(top: 2.0),
                 child: Row(
                   children: <Widget>[
-
                     ///watch video
                     Expanded(
                       flex: 5,
@@ -242,18 +290,23 @@ class _HomeScreenState extends State<HomeScreen> {
                               children: const [
                                 Padding(
                                   padding: EdgeInsets.symmetric(
-                                      horizontal: 15, vertical: 5),
+                                      horizontal: 10, vertical: 5),
                                   child: Image(
-                                      image: AssetImage(CustomImages.video_play),
+                                      image:
+                                          AssetImage(CustomImages.video_play),
                                       width: 28),
                                 ),
-                                Text("Watch video")
+                                Text(CustomText.watch_video)
                               ],
                             ),
                           ),
                         ),
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => const WatchVideoScreen()));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const WatchVideoScreen()));
                         },
                       ),
                     ),
@@ -278,13 +331,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                       image: AssetImage(CustomImages.diamond),
                                       width: 30),
                                 ),
-                                Text("Buy Point")
+                                Text(CustomText.buy_point)
                               ],
                             ),
                           ),
                         ),
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => const BuyPointScreen()));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const BuyPointScreen()));
                         },
                       ),
                     ),
@@ -297,7 +354,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: const EdgeInsets.only(top: 2.0),
                 child: Row(
                   children: <Widget>[
-
                     ///watch video new
                     Expanded(
                       flex: 5,
@@ -313,22 +369,27 @@ class _HomeScreenState extends State<HomeScreen> {
                               children: const [
                                 Padding(
                                   padding: EdgeInsets.symmetric(
-                                      horizontal: 15, vertical: 5),
+                                      horizontal: 10, vertical: 5),
                                   child: Image(
-                                      image: AssetImage(CustomImages.video_play),
+                                      image:
+                                          AssetImage(CustomImages.video_play),
                                       width: 28),
                                 ),
                                 Text("Watch video"),
                                 Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: Text("new" , style: TextStyle(color: Colors.red)),
+                                  padding: EdgeInsets.all(4.0),
+                                  child: Text("new",
+                                      style: TextStyle(color: Colors.red)),
                                 ),
                               ],
                             ),
                           ),
                         ),
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) =>  YouTubePlayerScreen()));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const WebviewtubeDemo()));
                         },
                       ),
                     ),
@@ -352,17 +413,22 @@ class _HomeScreenState extends State<HomeScreen> {
                                   child: Padding(
                                     padding: EdgeInsets.all(8.0),
                                     child: Image(
-                                        image: AssetImage(CustomImages.privacy_policy),
+                                        image: AssetImage(
+                                            CustomImages.privacy_policy),
                                         width: 30),
                                   ),
                                 ),
-                                Text("Privacy policy")
+                                Text(CustomText.privacy_policy)
                               ],
                             ),
                           ),
                         ),
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => const PrivacyPolicyScreen()));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const PrivacyPolicyScreen()));
                         },
                       ),
                     ),
@@ -406,10 +472,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         TextButton(
                           onPressed: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginOne()));
-                           /* final provider = Provider.of<GoogleSignInProvider>(context , listen: false);
-                            provider.logout();
-                            Navigator.pop(context);*/
+                            loginController.logout();
+                           // _logout(context);
                           },
                           child: const Text('Yes'),
                         ),
@@ -418,10 +482,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               ),
-
-              const SizedBox(
-                height: 15,
-              ),
+              const SizedBox(height: 15),
 
               /// version
               const Text(
@@ -429,7 +490,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 25),
               ),
-              //Icon(),
+
+               ///token
+              /* Text("$Token",textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 25),
+              ),*/
             ],
           ),
         ),
