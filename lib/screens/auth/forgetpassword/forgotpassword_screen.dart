@@ -15,7 +15,7 @@ class ForgotPasswordScreen extends StatefulWidget {
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final ForgetPasswordController forgetPasswordController = Get.put(ForgetPasswordController());
   final TextEditingController emailController = TextEditingController();
-  String Message = '';
+  String _message = '';
 
   @override
   void initState() {
@@ -29,7 +29,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     String? message = prefs.getString('message');
 
     setState(() {
-      Message = message ?? '';
+      _message = message ?? '';
       if (kDebugMode) {
         print(message);
       }
@@ -51,7 +51,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       );
     }else{
       final snackBar = SnackBar(
-        content: Text(Message),
+        content: Text(_message),
       );
 
       // Find the ScaffoldMessenger in the widget tree
@@ -72,7 +72,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             padding: EdgeInsets.all(8.0),
             child: Text("Forgot Password" , style: TextStyle(fontSize: 20)),
           ),
-
           const SizedBox(height: 30),
 
           ///mail

@@ -6,17 +6,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 Future main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-
-  //await EasyLocalization.ensureInitialized();
-
+  WidgetsFlutterBinding.ensureInitialized(); // Initialize SharedPreferences
+  await Future.wait([
+    SharedPreferences.getInstance(),
+  ]);
 
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.blue,
   ));
+
+
 
   runApp(
     MultiProvider(

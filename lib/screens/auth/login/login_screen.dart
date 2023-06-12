@@ -1,14 +1,18 @@
 import 'package:aaacyborg/controller/login_controller.dart';
+import 'package:aaacyborg/controller/privacy_controller.dart';
+import 'package:aaacyborg/controller/profile_controller.dart';
 import 'package:aaacyborg/screens/auth/forgetpassword/forgotpassword_screen.dart';
 import 'package:aaacyborg/screens/auth/ragister/ragister_screen.dart';
 import 'package:aaacyborg/screens/home_screen.dart';
 import 'package:aaacyborg/widgets/widgets.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'provider.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -21,34 +25,48 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   final LoginController loginController = Get.put(LoginController());
+  final PrivacyController privacyController = Get.put(PrivacyController());
+  final ProfileController profileController = Get.put(ProfileController());
 
-  String token = '';
+  String _token = '';
+  String _url = '';
   String message = '';
   String errorMessage = '';
   String status = '';
   String userType = '';
   bool _isPasswordVisible = false;
   bool isChecked = false;
+  String url = "";
+  late bool _isLoading;
 
   /*final TextEditingController userController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();*/
 
   final String _loginMessage = '';
 
-  /*void validateAndLogin() {
-    String username = userController.text;
-    String password = passwordController.text;
+  @override
+  void initState() {
+    super.initState();
+    _getAccessToken();
+    _isLoading = true;
+    Future.delayed(const Duration(seconds: 2) , () {
+      setState(() {
+        _isLoading = false;
+      });
+    });
+  }
 
-    if (username.isEmpty || password.isEmpty) {
-      loginController.loginWithEmail();
-    } else {
-      Fluttertoast.showToast(
-        msg: 'Please fill in all fields',
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.SNACKBAR,
-      );
-    }
-  }*/
+  ///Token From Api
+  Future<void> _getAccessToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? url = prefs.getString('url');
+    String? token = prefs.getString('token');
+
+    setState(() {
+      _url = url ?? '';
+      _token = token ?? '';
+    });
+  }
 
   ///validation
   void _submitForm() {
@@ -66,8 +84,11 @@ class _LoginScreenState extends State<LoginScreen> {
     } else {
       if (isChecked == true) {
         // One or more fields are empty, perform error handling
-        print('data submited!');
+        if (kDebugMode) {
+          print('data submited!');
+        }
         loginController.loginWithEmail();
+        profileController.profile();
       } else {
         Fluttertoast.showToast(
           msg: 'Please check privacy policy',
@@ -78,7 +99,9 @@ class _LoginScreenState extends State<LoginScreen> {
           textColor: Colors.white,
         );
       }
-      print('One or more fields are empty!');
+      if (kDebugMode) {
+        print('One or more fields are empty!');
+      }
     }
   }
 
@@ -101,6 +124,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final userProvider = Provider.of<UserProvider>(context);
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(
@@ -133,7 +158,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     border: OutlineInputBorder(
                         borderSide: const BorderSide(color: Colors.black),
                         borderRadius: BorderRadius.circular(20)),
-                    labelText: "Email / User Name",
+                    labelText: "User Name / Email",
                     hintText: "Enter Your Ragister Email / User Name",
                   ),
                 ),
@@ -183,7 +208,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => ForgotPasswordScreen()));
+                          builder: (context) => const ForgotPasswordScreen()));
                 },
               ),
 
@@ -203,29 +228,47 @@ class _LoginScreenState extends State<LoginScreen> {
                         });
                       },
                     ),
-                    const Text(
-                      "Privacy Policy",
-                      style: TextStyle(decoration: TextDecoration.underline),
+                     InkWell(
+                      child: const Text(
+                        "Privacy Policy",
+                        style: TextStyle(decoration: TextDecoration.underline),
+                      ),
+                      onTap: () {
+                        launch(_url);
+                        privacyController.privacy();
+                      },
                     )
                   ],
                 ),
               ),
               const SizedBox(height: 20),
 
-              ///submit btn
-              SizedBox(
-                width: 120,
-                height: 40,
-                child: ElevatedButton(
-                    onPressed: () {
-                      _submitForm();
-                      //validateAndLogin();
-                    },
-                    child: const Text("submit")),
+              Center(
+                child: FutureBuilder<String>(
+                  builder:
+                      (BuildContext context, AsyncSnapshot<String> snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const CircularProgressIndicator();
+                    } else {
+                      return ///submit btn
+                        SizedBox(
+                          width: 120,
+                          height: 40,
+                          child: ElevatedButton(
+                              onPressed: () {
+                                _submitForm();
+                              },
+                              child: const Text("submit")),
+                        );
+                    }
+                  },
+                ),
               ),
 
+
+
               /// Login in with Google
-              Padding(
+              /*Padding(
                 padding: const EdgeInsets.only(top: 25),
                 child: SizedBox(
                   width: 190,
@@ -260,7 +303,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                   ),
                 ),
-              ),
+              ),*/
               const SizedBox(height: 25),
 
               ///Don't have an account
@@ -278,15 +321,15 @@ class _LoginScreenState extends State<LoginScreen> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => RegisterScreen()));
+                          builder: (context) => const RegisterScreen()));
                 },
               ),
 
-              ///token
+             /*///token
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text(token),
-              ),
+                child: Text(_token),
+              ),*/
 
               ///message from API
               Padding(

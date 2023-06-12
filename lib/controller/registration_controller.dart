@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RegistrationController extends GetxController{
   TextEditingController firstNameController = TextEditingController();
@@ -43,6 +44,16 @@ class RegistrationController extends GetxController{
             if (kDebugMode) {
               print(jsonDecode(response.body)["message"]);
             }
+
+            var dataArray = (json['data'] as List);
+            var token = dataArray[0]['token'];
+            if (kDebugMode) {
+              print(token);
+            }
+
+            final SharedPreferences prefs = await SharedPreferences.getInstance();
+            await prefs.setString('tokenRegister', token);
+
             Get.to(const LoginScreen());
             firstNameController.clear();
             lastNameController.clear();

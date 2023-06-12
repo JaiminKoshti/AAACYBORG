@@ -1,12 +1,16 @@
-import 'package:aaacyborg/screens/buy_point_screen.dart';
+import 'package:aaacyborg/screens/buy_point/buy_point_screen.dart';
 import 'package:aaacyborg/screens/delete_account_screen.dart';
 import 'package:aaacyborg/screens/persnol_info_screen.dart';
 import 'package:aaacyborg/screens/privacy_policy_screen.dart';
 import 'package:aaacyborg/widgets/dark_mode_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
+import '../controller/privacy_controller.dart';
 import '../widgets/widgets.dart';
 
 class StoreScreen extends StatefulWidget {
@@ -18,6 +22,7 @@ class StoreScreen extends StatefulWidget {
 
 class _StoreScreenState extends State<StoreScreen> {
   bool light = true;
+  final PrivacyController privacyController = Get.put(PrivacyController());
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +32,8 @@ class _StoreScreenState extends State<StoreScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            const SizedBox(height: 30),
+
             /// Buy point
             Padding(
               padding: const EdgeInsets.only(top: 8.0, left: 12, right: 12),
@@ -47,7 +54,8 @@ class _StoreScreenState extends State<StoreScreen> {
                                 width: 30)),
                         Padding(
                           padding: EdgeInsets.only(top: 3.0, bottom: 10),
-                          child: Text(CustomText.buy_point,
+                          child: Text(
+                            CustomText.buy_point,
                             textAlign: TextAlign.center,
                             style: TextStyle(fontSize: 15),
                           ),
@@ -100,7 +108,7 @@ class _StoreScreenState extends State<StoreScreen> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => PersnolInfoScreen()));
+                          builder: (context) => const PersnolInfoScreen()));
                 },
               ),
             ),
@@ -170,7 +178,8 @@ class _StoreScreenState extends State<StoreScreen> {
                                 width: 30)),
                         Padding(
                           padding: EdgeInsets.only(top: 3.0, bottom: 10),
-                          child: Text(CustomText.privacy_policy,
+                          child: Text(
+                            CustomText.privacy_policy,
                             textAlign: TextAlign.center,
                             style: TextStyle(fontSize: 15),
                           ),
@@ -180,10 +189,7 @@ class _StoreScreenState extends State<StoreScreen> {
                   ),
                 ),
                 onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const PrivacyPolicyScreen()));
+                  privacyController.privacy();
                 },
               ),
             ),

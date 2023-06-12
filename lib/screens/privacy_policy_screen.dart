@@ -5,8 +5,9 @@ class PrivacyPolicyScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Padding(
+    return  Scaffold(
+      appBar: AppBar(automaticallyImplyLeading: true, centerTitle: true),
+      body: const Padding(
         padding: EdgeInsets.only(top: 50.0),
         child: Text("Privacy Policy for AAACYBORG",
             textAlign: TextAlign.center,

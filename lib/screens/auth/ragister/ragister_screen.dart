@@ -1,11 +1,14 @@
 import 'package:aaacyborg/controller/registration_controller.dart';
 import 'package:aaacyborg/screens/auth/login/login_screen.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
+import '../../../controller/privacy_controller.dart';
+
 class RegisterScreen extends StatefulWidget {
-  RegisterScreen({Key? key}) : super(key: key);
+  const RegisterScreen({Key? key}) : super(key: key);
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
@@ -14,12 +17,9 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   final RegistrationController registrationController =
       Get.put(RegistrationController());
+  final PrivacyController privacyController = Get.put(PrivacyController());
 
   var isLogin = false.obs;
-
-  final TextEditingController emailController = TextEditingController();
-
-  final TextEditingController passwordController = TextEditingController();
 
   bool _isPasswordVisible = false;
 
@@ -51,7 +51,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
     } else {
       if (isChecked == true) {
         // One or more fields are empty, perform error handling
-        print('data submited!');
+        if (kDebugMode) {
+          print('data submited!');
+        }
         registrationController.registerWithEmail();
       } else {
         Fluttertoast.showToast(
@@ -63,7 +65,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
           textColor: Colors.white,
         );
       }
-      print('One or more fields are empty!');
+      if (kDebugMode) {
+        print('One or more fields are empty!');
+      }
     }
   }
 
@@ -238,9 +242,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         });
                       },
                     ),
-                    const Text(
-                      "Privacy Policy",
-                      style: TextStyle(decoration: TextDecoration.underline),
+                    InkWell(
+                      child: const Text(
+                        "Privacy Policy",
+                        style: TextStyle(decoration: TextDecoration.underline),
+                      ),
+                      onTap: () {
+                        privacyController.privacy();
+                      },
                     )
                   ],
                 ),

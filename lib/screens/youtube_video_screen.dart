@@ -1,6 +1,10 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:webviewtube/webviewtube.dart';
+
+import '../controller/watch_video_controller.dart';
 
 ///API Key From Google : AIzaSyAys51gpxTV9xaZUngaL-2-kuo2LqLNyfs
 /*class YouTubePlayerScreen extends StatefulWidget {
@@ -127,17 +131,42 @@ class WebviewtubeDemo extends StatefulWidget {
 }
 
 class _WebviewtubeDemoState extends State<WebviewtubeDemo> {
+  final WatchVideoController watchVideoController = Get.put(WatchVideoController());
   final controller = WebviewtubeController();
+  dynamic _message = '';
+  dynamic _requiredWatchSeconds = '';
+  dynamic _pointsWatchVideo = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _getData();
+  }
+
+  ///Token From Api
+  Future<void> _getData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    dynamic message = prefs.getString('message');
+    dynamic requiredWatchSeconds = prefs.getInt('required_watch_seconds');
+    dynamic pointsWatchVideo = prefs.getInt('pointsWatchVideo');
+
+    setState(() {
+      _message = message ?? '';
+      _requiredWatchSeconds = requiredWatchSeconds ?? 0;
+      _pointsWatchVideo = pointsWatchVideo ?? 0;
+    });
+  }
 
   ///option given by webviewtube
-  final options = const WebviewtubeOptions(
-      forceHd: true, loop: true);
+  final options = const WebviewtubeOptions(showControls: true,startAt: 1,endAt: 10,
+      mute: true, autoPlay: true, forceHd: true, loop: true);
 
   @override
   void dispose() {
     controller.dispose();
     super.dispose();
   }
+
   bool isChecked = false;
   late bool autoplay;
 
@@ -150,9 +179,9 @@ class _WebviewtubeDemoState extends State<WebviewtubeDemo> {
   }
 
   final List<String> _ids = [
+    'gQDByCdjUXw',
     'nPt8bK2gbaU',
     "Bvbjt_1-E0w",
-    'gQDByCdjUXw',
     'iLnmTe5Q2Qw',
     '_WoCV4c6XOE',
     'KmzdUe0RSJo',
@@ -162,15 +191,41 @@ class _WebviewtubeDemoState extends State<WebviewtubeDemo> {
     '34_PXCzGw1M',
   ];
 
+  /*void _addVideoEventListeners() {
+    controller.nextVideo(); evaluateJavascript('''
+      var video = document.querySelector('video');
+
+      function handleVideoStarted() {
+        window.flutter_inappwebview.callHandler('videoStarted');
+      }
+
+      function handleVideoStopped() {
+        window.flutter_inappwebview.callHandler('videoStopped');
+      }
+
+      function handleVideoFinished() {
+        window.flutter_inappwebview.callHandler('videoFinished');
+      }
+
+      if (video) {
+        video.addEventListener('play', handleVideoStarted);
+        video.addEventListener('pause', handleVideoStopped);
+        video.addEventListener('ended', handleVideoFinished);
+      }
+    ''');
+
+  void player = WebviewtubePlayer(
+    videoId: _ids.first,
+    options: options,
+    controller: controller,
+      );*/
+
   @override
   Widget build(BuildContext context) {
-   /* final urlWithAutoplay = autoplay
-        ? '$_ids?autoplay=1'
-        : _ids;*/
     return Scaffold(
+      appBar: AppBar(title: const Text("AAACYBORG") , automaticallyImplyLeading: true , centerTitle: true),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(vertical: 10),
-        /* children: <Widget>[*/
         child: Column(
           children: <Widget>[
             const SizedBox(height: 20),
@@ -189,7 +244,7 @@ class _WebviewtubeDemoState extends State<WebviewtubeDemo> {
               ),
             ),
 
-            /// auto play and text
+            /// auto play + text
             Row(
               children: <Widget>[
                 ///auto Play
@@ -234,18 +289,19 @@ class _WebviewtubeDemoState extends State<WebviewtubeDemo> {
               ],
             ),
 
+            ///Second + point
             Padding(
               padding: const EdgeInsets.only(top: 2.0),
               child: Row(
-                children: const <Widget>[
+                children: <Widget>[
                   ///Second
                   Expanded(
                     flex: 5,
                     child: Center(
                       child: SizedBox(
                         height: 50,
-                        child: Text("60 Sec",
-                            style: TextStyle(
+                        child: Text("$_requiredWatchSeconds Sec",
+                            style: const TextStyle(
                                 fontSize: 23, fontWeight: FontWeight.w400)),
                       ),
                     ),
@@ -257,8 +313,8 @@ class _WebviewtubeDemoState extends State<WebviewtubeDemo> {
                     child: Center(
                       child: SizedBox(
                         height: 50,
-                        child: Text("60 Point",
-                            style: TextStyle(
+                        child: Text("$_pointsWatchVideo Point",
+                            style: const TextStyle(
                                 fontSize: 23, fontWeight: FontWeight.w400)),
                       ),
                     ),
@@ -267,6 +323,7 @@ class _WebviewtubeDemoState extends State<WebviewtubeDemo> {
               ),
             ),
 
+            ///btnOther
             SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(

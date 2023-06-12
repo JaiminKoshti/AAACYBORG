@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
@@ -8,15 +7,18 @@ import 'package:image_picker/image_picker.dart';
 
 
 class PersnolInfoScreen extends StatefulWidget {
+  const PersnolInfoScreen({Key? key}) : super(key: key);
+
 
   @override
+  // ignore: library_private_types_in_public_api
   _PersnolInfoScreenState createState() => _PersnolInfoScreenState();
 }
 
 
 class _PersnolInfoScreenState extends State<PersnolInfoScreen> {
   File? _image;
-  var Token = '';
+  final _token = '';
   late final String apiToken;
 
 
@@ -30,10 +32,10 @@ class _PersnolInfoScreenState extends State<PersnolInfoScreen> {
         _image = File(pickedImage.path);
       });
     }
-    await _uploadImage();
+   /* await _uploadImage();*/
   }
 
-  Future<void> _uploadImage() async {
+  /*Future<void> _uploadImage() async {
 
     // Add the image file to the request
     var imageStream = http.ByteStream(_image!.openRead());
@@ -45,19 +47,21 @@ class _PersnolInfoScreenState extends State<PersnolInfoScreen> {
       length!,
       filename: _image!.path,
     );
-  }
+  }*/
 
   Future<void> uploadImage(String token) async {
     if (_image == null) {
-      print('No image selected.');
+      if (kDebugMode) {
+        print('No image selected.');
+      }
       return;
     }
 
     const url = 'https://cnt.hiredeveloper.today/api/updateTalentProfileImage';
 
-    final response = await http.post(Uri.parse(url),body: {});
-    var responseData = jsonDecode(response.body);
-    var token = Token;
+    //final response = await http.post(Uri.parse(url),body: {});
+    //var responseData = jsonDecode(response.body);
+    var token = _token;
     // Create multipart request
     var request = http.MultipartRequest('POST', Uri.parse(url));
     // Set the authorization header with the token
@@ -71,12 +75,18 @@ class _PersnolInfoScreenState extends State<PersnolInfoScreen> {
       final response = await request.send();
 
       if (response.statusCode == 200) {
-        print('Image uploaded successfully.');
+        if (kDebugMode) {
+          print('Image uploaded successfully.');
+        }
       } else {
-        print('Failed to upload image. Error: ${response.statusCode}');
+        if (kDebugMode) {
+          print('Failed to upload image. Error: ${response.statusCode}');
+        }
       }
     } catch (e) {
-      print('Error occurred while uploading image: $e');
+      if (kDebugMode) {
+        print('Error occurred while uploading image: $e');
+      }
     }
   }
 
@@ -104,13 +114,13 @@ class _PersnolInfoScreenState extends State<PersnolInfoScreen> {
               backgroundImage: FileImage(_image!),
             ),
           ),
-        Text(Token),
+        Text(_token),
       ],
     );
   }
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(StringProperty('Token', Token));
+    properties.add(StringProperty('Token', _token));
   }
 }

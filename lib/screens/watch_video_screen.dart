@@ -1,8 +1,9 @@
-import 'package:aaacyborg/screens/my_campaign_screen.dart';
+import 'package:aaacyborg/screens/home_screen.dart';
 import 'package:aaacyborg/screens/store_sceen.dart';
 import 'package:aaacyborg/screens/youtube_video_screen.dart';
 import 'package:aaacyborg/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class WatchVideoScreen extends StatefulWidget {
   const WatchVideoScreen({Key? key}) : super(key: key);
@@ -13,9 +14,10 @@ class WatchVideoScreen extends StatefulWidget {
 
 class _WatchVideoScreenState extends State<WatchVideoScreen> {
   int _selectedIndex = 1;
+  dynamic _points = 0;
 
   static  final List<Widget> _widgetOptions = <Widget>[
-    const MyCampaignScreen(),
+    const HomeScreen(),
     const WebviewtubeDemo(),
     const StoreScreen(),
   ];
@@ -25,12 +27,27 @@ class _WatchVideoScreenState extends State<WatchVideoScreen> {
       _selectedIndex = index;
     });
   }
+  @override
+  void initState() {
+    super.initState();
+    _getData();
+  }
+
+  ///Token From Api
+  Future<void> _getData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    dynamic point = prefs.getInt('point');
+
+    setState(() {
+      _points = point ?? '';
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
+      /*appBar: AppBar(
+        automaticallyImplyLeading: true,
         centerTitle: true,
         title: const Padding(
           padding: EdgeInsets.only(right: 50.0),
@@ -38,17 +55,16 @@ class _WatchVideoScreenState extends State<WatchVideoScreen> {
             "AAACYBORG",
           ),
         ),
-        leading: const Icon(Icons.ac_unit, size: 30, color: Colors.white70),
-        actions: const [
-          Center(child: Text("600", textAlign: TextAlign.center)),
-          Padding(
+        actions: [
+          Center(child: Text("$_points", textAlign: TextAlign.center)),
+          const Padding(
             padding: EdgeInsets.all(6.0),
             child:Image(
                 image: AssetImage(CustomImages.diamond),
                 width: 30),
           )
         ],
-      ),
+      ),*/
       body: _widgetOptions.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[

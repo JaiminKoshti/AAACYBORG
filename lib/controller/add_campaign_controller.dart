@@ -1,29 +1,34 @@
 import 'dart:convert';
-import 'package:aaacyborg/screens/auth/login/login_screen.dart';
+import 'package:aaacyborg/utils/apis.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../screens/auth/login/provider.dart';
-import '../utils/apis.dart';
+import 'package:http/http.dart' as http;
 
-class ForgetPasswordController extends GetxController{
-  TextEditingController emailController = TextEditingController();
+class AddCampaignController extends GetxController {
 
-  Future<void> forgetpassword() async {
+
+
+  Future<void> addCampaign() async {
 
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
+    final enteredURL = prefs.getString('enteredURL');
+    final viewQuantity = prefs.getInt('viewQuantity');
+    final watchSec = prefs.getInt('watchSec');
 
     try {
       var headers = {'content-Type': 'application/json'};
       var url = Uri.parse(
-          ApiEndPoints.baseUrl + ApiEndPoints.authEndPoints.forgetpassword);
+          ApiEndPoints.baseUrl + ApiEndPoints.authEndPoints.addCampaign);
       Map body = {
-        'email': emailController.text,
-        "token" : token
+        'video_url' : enteredURL,
+        'video_quantity' : viewQuantity,
+        'required_watch_seconds' : watchSec,
+        'vip_account_reduce_point' : 0,
+        'video_point_cost' : 20,
+        'token' : token
       };
 
       http.Response response =
@@ -34,8 +39,6 @@ class ForgetPasswordController extends GetxController{
         if (kDebugMode) {
           print(response.statusCode);
           print(json["status"]);
-          print(json["message"]);
-
         }
 
         if (json['status'] == true) {
@@ -43,33 +46,24 @@ class ForgetPasswordController extends GetxController{
             print(json['data']);
           }
 
-          var message = json['message'];
-          final SharedPreferences prefs = await SharedPreferences.getInstance();
-          if (kDebugMode) {
-            print(json["message"]);
-          }
-          await prefs.setString('message', message);
-
-          Get.to(const LoginScreen());
-          final userProvider =
-          Provider.of<UserProvider>(Get.context!, listen: false);
-          //userProvider.setUser(emailController.text);
-          emailController.clear();
-
-          //var dataArray = (json['data'] as List);
-          /*if (dataArray.isNotEmpty) {
+          var dataArray = (json['data'] as List);
+          if (dataArray.isNotEmpty) {
             var data = dataArray[0];
-            var message = json['message'];
+            var token = data['token'];
 
             final SharedPreferences prefs = await SharedPreferences.getInstance();
-            await prefs.setString('message', message);
+            await prefs.setString('token', token);
 
-            Get.to(const HomeScreen());
-            final userProvider =
-            Provider.of<UserProvider>(Get.context!, listen: false);
-            userProvider.setUser(emailController.text);
-            emailController.clear();
-          }*/
+            /*Get.to(const HomeScreen());
+            userNameController.clear();
+            passwordController.clear();*/
+            /*final userProvider =
+                Provider.of<UserProvider>(Get.context!, listen: false);
+            userProvider.setUser(userNameController.text);
+            userNameController.clear();
+            passwordController.clear();*/
+            /*forTokenController;*/
+          }
         } else {
           if (kDebugMode) {
             print(json['status']);

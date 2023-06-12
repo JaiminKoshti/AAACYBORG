@@ -13,6 +13,9 @@ class CustomImages {
   static const String delete_account = 'assets/delete_account.png';
   static const String personal_info = 'assets/personal_info.png';
   static const String google = 'assets/google.png';
+  static const String inquiry = 'assets/inquiry.png';
+  static const String whatsApp = 'assets/whatsapp.png';
+  static const String share = 'assets/share.png';
 }
 
 class CustomIcons{
@@ -24,8 +27,7 @@ class CustomText{
   static const String context_us = "Contact us";
   static const String my_campaign = "My campaign";
   static const String privacy_policy = "Privacy Policy";
-  static const String watch_video = "Watch Video";
+  static const String earn_point = "Earn Point";
   static const String buy_point = "Buy Point";
   static const String logout = "Logout";
-
 }

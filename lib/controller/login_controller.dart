@@ -7,6 +7,8 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+
+import '../screens/auth/login/login_screen.dart';
 import '../screens/auth/login/provider.dart';
 
 class LoginController extends GetxController {
@@ -15,6 +17,8 @@ class LoginController extends GetxController {
   String forTokenController = "1234567890";
 
   Future<void> loginWithEmail() async {
+    //final userProvider = Provider.of<UserProvider>(context as BuildContext);
+
     try {
       var headers = {'content-Type': 'application/json'};
       var url = Uri.parse(
@@ -48,13 +52,19 @@ class LoginController extends GetxController {
             final SharedPreferences prefs = await SharedPreferences.getInstance();
             await prefs.setString('token', token);
 
+            /*Future.delayed(const Duration(seconds: 2), () {
+              final accessToken = '$token';
+              userProvider.login(accessToken);
+            });*/
             Get.to(const HomeScreen());
-            final userProvider =
+            userNameController.clear();
+            passwordController.clear();
+            /*final userProvider =
                 Provider.of<UserProvider>(Get.context!, listen: false);
             userProvider.setUser(userNameController.text);
             userNameController.clear();
-            passwordController.clear();
-            forTokenController;
+            passwordController.clear();*/
+            /*forTokenController;*/
           }
         } else {
           if (kDebugMode) {
@@ -77,7 +87,13 @@ class LoginController extends GetxController {
             return SimpleDialog(
               title: const Text('Error'),
               contentPadding: const EdgeInsets.all(20),
-              children: [Text(e.toString())],
+              children: [Text(e.toString()) , SizedBox(width: 10,
+                child: ElevatedButton(
+                    onPressed: () {
+                      Get.offAll(const LoginScreen());
+                    },
+                    child: const Text("Login")),
+              )],
             );
           });
     }
